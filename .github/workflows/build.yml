@@ -13,15 +13,21 @@ jobs:
       - name: Clonar repositorio
         uses: actions/checkout@v4
 
-      - name: Compilar APK usando Buildozer
-        uses: ArtemSBulgakov/buildozer-action@v1
-        id: buildozer
+      - name: Configurar Java
+        uses: actions/setup-java@v4
         with:
-          command: android debug
+          distribution: 'zulu'
+          java-version: '17'
+
+      - name: Compilar APK con Buildozer
+        uses: ClementGre/buildozer-action@v0.5.0
+        with:
+          target: android
+          command: debug
           buildozer_version: master
 
       - name: Subir APK generado
         uses: actions/upload-artifact@v4
         with:
           name: jarvis-apk
-          path: ${{ steps.buildozer.outputs.filename }}
+          path: bin/*.apk
