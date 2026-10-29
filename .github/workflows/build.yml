@@ -1,24 +1,25 @@
-name: Compilar APK JARVIS
+name: Build Android APK with Buildozer
 
 on:
   push:
     branches: [ main, master ]
-  workflow_dispatch:
+  pull_request:
+    branches: [ main, master ]
 
 jobs:
   build:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
 
     steps:
-      - name: Clonar repositorio
+      - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Configurar Python
+      - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.10'
 
-      - name: Instalar dependencias esenciales de Buildozer
+      - name: Install system dependencies & Android Tools
         run: |
           sudo apt-get update
           sudo apt-get install -y \
@@ -29,38 +30,35 @@ jobs:
             libsdl2-image-dev \
             libsdl2-mixer-dev \
             libsdl2-ttf-dev \
+            libportmidi-dev \
             libswscale-dev \
             libavformat-dev \
             libavcodec-dev \
             zlib1g-dev \
-            libsqlite3-dev \
-            sqlite3 \
-            bzip2 \
-            libbz2-dev \
-            libssl-dev \
-            openssl \
-            libffi-dev \
-            liblzma-dev \
-            tk-dev \
+            openjdk-17-jdk \
             autoconf \
+            automake \
             libtool \
             pkg-config \
-            cmake \
-            openjdk-17-jdk \
-            zip \
-            unzip
+            cmake
 
-      - name: Instalar Buildozer y Cython
+      - name: Install Buildozer & Cython
         run: |
-          pip install --upgrade pip setuptools
+          pip install --upgrade pip
           pip install buildozer cython
 
-      - name: Compilar APK
+      - name: Accept Android SDK Licenses pre-build
+        run: |
+          mkdir -p ~/.buildozer/android/platform/android-sdk/cmdline-tools/latest/bin
+          # Acepta automáticamente todas las licencias del SDK de Android
+          yes | sdkmanager --licenses || true
+
+      - name: Build APK with Buildozer
         run: |
           buildozer -v android debug
 
-      - name: Subir APK generado
+      - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: jarvis-apk
+          name: app-debug
           path: bin/*.apk
