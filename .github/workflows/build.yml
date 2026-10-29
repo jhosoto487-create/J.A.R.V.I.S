@@ -1,0 +1,27 @@
+name: Compilar APK JARVIS
+
+on:
+  push:
+    branches: [ main, master ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Clonar repositorio
+        uses: actions/checkout@v4
+
+      - name: Compilar APK usando Buildozer
+        uses: ArtemSBulgakov/buildozer-action@v1
+        id: buildozer
+        with:
+          command: android debug
+          buildozer_version: master
+
+      - name: Subir APK generado
+        uses: actions/upload-artifact@v4
+        with:
+          name: jarvis-apk
+          path: ${{ steps.buildozer.outputs.filename }}
