@@ -1,4 +1,24 @@
-# (int) Target Android API, should be one of the supported API levels, e.g. 31 or 33
+[app]
+
+# (str) Title of your application
+title = Mi Aplicacion
+
+# (str) Package name
+package.name = miapli
+
+# (str) Package domain (needed for android packaging)
+package.domain = org.test
+
+# (list) Source files to include (let it blank to include all files)
+source.include_exts = py,png,jpg,kv,atlas
+
+# (list) Application requirements
+requirements = python3,kivy
+
+# (str) Supported orientations
+orientation = portrait
+
+# (int) Target Android API, should be one of the supported API levels
 android.api = 33
 
 # (int) Minimum API required
